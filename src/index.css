@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-slate-mist: #F8FAFC;
+  --color-slate-mist-text: #0F172A;
+  --color-slate-mist-border: #E2E8F0;
+
+  --color-soft-cream: #FFFDF2;
+  --color-soft-cream-text: #1E1B18;
+  --color-soft-cream-border: #E6E1D3;
+
+  --color-mint-tint: #F0FDF4;
+  --color-mint-tint-text: #022C22;
+  --color-mint-tint-border: #DCFCE7;
+}
+
+@layer base {
+  :root {
+    --bg-color: var(--color-slate-mist);
+    --text-color: var(--color-slate-mist-text);
+    --border-color: var(--color-slate-mist-border);
+    --primary-color: #3B82F6;
+    --primary-text: #FFFFFF;
+  }
+
+  [data-theme='soft-cream'] {
+    --bg-color: var(--color-soft-cream);
+    --text-color: var(--color-soft-cream-text);
+    --border-color: var(--color-soft-cream-border);
+    --primary-color: #D97706;
+    --primary-text: #FFFFFF;
+  }
+
+  [data-theme='mint-tint'] {
+    --bg-color: var(--color-mint-tint);
+    --text-color: var(--color-mint-tint-text);
+    --border-color: var(--color-mint-tint-border);
+    --primary-color: #10B981;
+    --primary-text: #FFFFFF;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
