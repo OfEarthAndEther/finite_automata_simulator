@@ -1,4 +1,5 @@
 # Finite Automata Simulator
+Srishti | 2024UCA1923 | CSAI2
 
 ## Project Overview
 
