@@ -1,51 +1,51 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Github, Linkedin, ArrowRight, Terminal, Cpu, GitMerge } from 'lucide-react';
 
-/* ─────────────────────────────────────────────
-   Floating state-node decoration (background)
-───────────────────────────────────────────── */
+/* ── palette ── */
+const C = {
+  bg: '#07070f',
+  gold: '#c9a84c',
+  goldFaint: 'rgba(201,168,76,0.08)',
+  goldDim: 'rgba(201,168,76,0.22)',
+  goldMid: 'rgba(201,168,76,0.55)',
+  cream: '#f0e6cc',
+  creamDim: 'rgba(240,230,204,0.55)',
+  dark: '#07070f',
+};
+
+/* ── floating state-node background decoration ── */
 const NODES = [
-  { id: 'q0', x: '8%', y: '18%', label: 'q₀', size: 52, delay: 0, duration: 7 },
-  { id: 'q1', x: '82%', y: '12%', label: 'q₁', size: 44, delay: 0.6, duration: 9 },
-  { id: 'q2', x: '75%', y: '72%', label: 'q₂', size: 56, delay: 1.2, duration: 8 },
-  { id: 'q3', x: '14%', y: '78%', label: 'q₃', size: 40, delay: 0.9, duration: 11 },
-  { id: 'qf', x: '50%', y: '88%', label: 'qf', size: 36, delay: 1.8, duration: 6 },
-  { id: 'qt', x: '90%', y: '44%', label: 'qₜ', size: 30, delay: 2.1, duration: 10 },
-  { id: 'qa', x: '4%', y: '52%', label: 'qₐ', size: 34, delay: 1.5, duration: 9 },
+  { id: 'q0', x: '7%', y: '16%', label: 'q0', size: 54, delay: 0, dur: 7 },
+  { id: 'q1', x: '82%', y: '11%', label: 'q1', size: 44, delay: 0.6, dur: 9 },
+  { id: 'q2', x: '76%', y: '70%', label: 'q2', size: 58, delay: 1.2, dur: 8 },
+  { id: 'q3', x: '13%', y: '76%', label: 'q3', size: 42, delay: 0.9, dur: 11 },
+  { id: 'qf', x: '50%', y: '88%', label: 'qf', size: 36, delay: 1.8, dur: 6 },
+  { id: 'qt', x: '90%', y: '44%', label: 'qt', size: 30, delay: 2.1, dur: 10 },
+  { id: 'qa', x: '3%', y: '51%', label: 'qa', size: 34, delay: 1.5, dur: 9 },
 ];
 
-function FloatingNode({ x, y, label, size, delay, duration, isAccepting }) {
+function FloatingNode({ x, y, label, size, delay, dur, accepting }) {
   return (
     <motion.div
-      style={{
-        position: 'absolute',
-        left: x,
-        top: y,
-        width: size,
-        height: size,
-        pointerEvents: 'none',
-        zIndex: 0,
-      }}
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{
-        opacity: [0.18, 0.34, 0.18],
-        y: [0, -14, 0],
-        scale: [1, 1.07, 1],
-      }}
-      transition={{
-        opacity: { duration, delay, repeat: Infinity, ease: 'easeInOut' },
-        y: { duration: duration * 0.8, delay, repeat: Infinity, ease: 'easeInOut' },
-        scale: { duration: duration * 1.1, delay, repeat: Infinity, ease: 'easeInOut' },
-      }}
+      style={{ position: 'absolute', left: x, top: y, pointerEvents: 'none', zIndex: 0 }}
+      animate={{ opacity: [0.15, 0.3, 0.15], y: [0, -12, 0] }}
+      transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
     >
-      <svg viewBox="0 0 100 100" width={size} height={size}>
-        {isAccepting && (
-          <circle cx="50" cy="50" r="48" fill="none" stroke="#c9a84c" strokeWidth="3" opacity="0.5" />
+      <svg viewBox="0 0 100 100" width={size} height={size} overflow="visible">
+        {accepting && (
+          <circle cx="50" cy="50" r="48" fill="none" stroke={C.gold} strokeWidth="2.5" opacity="0.4" />
         )}
-        <circle cx="50" cy="50" r="42" fill="none" stroke="#c9a84c" strokeWidth="2.5" opacity="0.6" />
-        <circle cx="50" cy="50" r="32" fill="rgba(201,168,76,0.06)" />
-        <text x="50" y="55" textAnchor="middle" fill="#c9a84c" fontSize="28" fontFamily="'IBM Plex Mono', monospace" opacity="0.7">
+        <circle cx="50" cy="50" r="40" fill="none" stroke={C.gold} strokeWidth="2" opacity="0.55" />
+        <circle cx="50" cy="50" r="30" fill={C.goldFaint} />
+        <text
+          x="50" y="57"
+          textAnchor="middle"
+          fill={C.gold}
+          fontSize="26"
+          fontFamily="monospace"
+          opacity="0.7"
+        >
           {label}
         </text>
       </svg>
@@ -53,32 +53,27 @@ function FloatingNode({ x, y, label, size, delay, duration, isAccepting }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Pill badge
-───────────────────────────────────────────── */
-function TypeBadge({ icon: Icon, label, sublabel, delay }) {
+/* ── automata type badge ── */
+function Badge({ Icon, label, sublabel, delay }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay }}
+      transition={{ duration: 0.5, delay }}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
+        display: 'flex', alignItems: 'center', gap: 10,
         padding: '10px 18px',
-        border: '1px solid rgba(201,168,76,0.25)',
-        borderRadius: '8px',
-        background: 'rgba(201,168,76,0.05)',
-        backdropFilter: 'blur(6px)',
+        border: `1px solid ${C.goldDim}`,
+        borderRadius: 8,
+        background: C.goldFaint,
       }}
     >
-      <Icon size={16} color="#c9a84c" opacity={0.85} />
+      <Icon size={15} color={C.gold} />
       <div>
-        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: '#c9a84c', letterSpacing: '0.06em' }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 12, color: C.gold, letterSpacing: '0.06em' }}>
           {label}
         </div>
-        <div style={{ fontFamily: "'Crimson Pro', serif", fontSize: '11px', color: 'rgba(201,168,76,0.55)', marginTop: '1px' }}>
+        <div style={{ fontFamily: 'monospace', fontSize: 10, color: C.goldMid, marginTop: 2 }}>
           {sublabel}
         </div>
       </div>
@@ -86,371 +81,325 @@ function TypeBadge({ icon: Icon, label, sublabel, delay }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Main landing page
-───────────────────────────────────────────── */
-export default function LandingPage({ onEnter }) {
-  const [hovered, setHovered] = useState(false);
-  const [typed, setTyped] = useState('');
-  const TAGLINE = 'δ(q, σ) → q\'  ·  ε-closure  ·  formal language boundaries';
+/* ── social link ── */
+function SocialLink({ href, Icon, children }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '9px 20px',
+        border: `1px solid ${hov ? C.goldMid : C.goldDim}`,
+        borderRadius: 6,
+        color: hov ? C.gold : C.goldMid,
+        fontFamily: 'monospace',
+        fontSize: 12,
+        letterSpacing: '0.05em',
+        textDecoration: 'none',
+        background: hov ? C.goldFaint : 'transparent',
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <Icon size={13} />
+      {children}
+    </a>
+  );
+}
 
-  // Typewriter effect for tagline
+/* ── CTA button ── */
+function EnterButton({ onClick }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 12,
+        padding: '15px 36px',
+        border: `1.5px solid ${C.gold}`,
+        borderRadius: 4,
+        background: hov ? C.gold : 'transparent',
+        color: hov ? C.dark : C.gold,
+        fontFamily: 'monospace',
+        fontSize: 14,
+        letterSpacing: '0.12em',
+        cursor: 'pointer',
+        transition: 'all 0.28s ease',
+        outline: 'none',
+      }}
+    >
+      Launch Simulator
+      <ArrowRight size={16} />
+    </button>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════════ */
+export default function LandingPage({ onEnter }) {
+  const TAGLINE = "delta(q, sigma) -> q'  ·  epsilon-closure  ·  formal language";
+  const [typed, setTyped] = useState('');
+
   useEffect(() => {
     let i = 0;
-    const interval = setInterval(() => {
+    const iv = setInterval(() => {
       setTyped(TAGLINE.slice(0, i + 1));
       i++;
-      if (i >= TAGLINE.length) clearInterval(interval);
-    }, 38);
-    return () => clearInterval(interval);
+      if (i >= TAGLINE.length) clearInterval(iv);
+    }, 36);
+    return () => clearInterval(iv);
   }, []);
 
   return (
-    <>
-      {/* Google Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
+    <div style={{
+      minHeight: '100vh',
+      width: '100%',
+      backgroundColor: C.bg,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '40px 24px',
+      boxSizing: 'border-box',
+    }}>
 
-        .landing-root {
-          min-height: 100vh;
-          background: #07070f;
-          background-image:
-            radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.10) 0%, transparent 60%),
-            linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
-          background-size: 100% 100%, 48px 48px, 48px 48px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          overflow: hidden;
-          padding: 40px 24px;
-        }
+      {/* Dot-grid overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+        backgroundImage: [
+          'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(201,168,76,0.10) 0%, transparent 55%)',
+          'linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px)',
+          'linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px)',
+        ].join(','),
+        backgroundSize: '100% 100%, 48px 48px, 48px 48px',
+      }} />
 
-        .enter-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px 36px;
-          background: transparent;
-          border: 1.5px solid #c9a84c;
-          border-radius: 4px;
-          color: #c9a84c;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 14px;
-          letter-spacing: 0.12em;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          transition: color 0.3s ease;
-        }
-        .enter-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: #c9a84c;
-          transform: translateX(-100%);
-          transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .enter-btn:hover::before { transform: translateX(0); }
-        .enter-btn:hover { color: #07070f; }
-        .enter-btn span, .enter-btn svg { position: relative; z-index: 1; }
+      {/* Floating nodes */}
+      {NODES.map(n => (
+        <FloatingNode key={n.id} {...n} accepting={n.id === 'qf'} />
+      ))}
 
-        .social-link {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 20px;
-          border: 1px solid rgba(201,168,76,0.2);
-          border-radius: 6px;
-          color: rgba(201,168,76,0.7);
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 12px;
-          letter-spacing: 0.05em;
-          text-decoration: none;
-          background: transparent;
-          transition: border-color 0.2s, color 0.2s, background 0.2s;
-        }
-        .social-link:hover {
-          border-color: rgba(201,168,76,0.6);
-          color: #c9a84c;
-          background: rgba(201,168,76,0.06);
-        }
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 72% 72% at 50% 50%, transparent 25%, rgba(7,7,15,0.88) 100%)',
+      }} />
 
-        .divider-line {
-          width: 100%;
-          max-width: 520px;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(201,168,76,0.25), transparent);
-          margin: 40px 0;
-        }
+      {/* ── Main content ── */}
+      <div style={{
+        position: 'relative', zIndex: 2,
+        maxWidth: 660, width: '100%',
+        textAlign: 'center',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+      }}>
 
-        @media (max-width: 600px) {
-          .hero-title { font-size: clamp(32px, 8vw, 52px) !important; }
-        }
-      `}</style>
+        {/* Category label */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            fontFamily: 'monospace', fontSize: 11,
+            letterSpacing: '0.18em', color: C.goldMid,
+            textTransform: 'uppercase', marginBottom: 28,
+          }}
+        >
+          <Terminal size={12} color={C.goldMid} />
+          Theory of Automata &amp; Formal Languages
+        </motion.div>
 
-      <div className="landing-root">
+        {/* Heading line 1 */}
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          style={{
+            fontSize: 'clamp(38px, 6.5vw, 64px)',
+            fontWeight: 300, lineHeight: 1.08,
+            color: C.cream, margin: '0 0 4px 0',
+            letterSpacing: '-0.01em',
+            fontFamily: 'Georgia, serif',
+          }}
+        >
+          Finite Automata
+        </motion.div>
 
-        {/* Floating background state nodes */}
-        {NODES.map((n, i) => (
-          <FloatingNode key={n.id} {...n} isAccepting={n.id === 'qf'} />
-        ))}
+        {/* Heading line 2 — italic gold */}
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.18 }}
+          style={{
+            fontSize: 'clamp(38px, 6.5vw, 64px)',
+            fontWeight: 300, fontStyle: 'italic', lineHeight: 1.08,
+            color: C.gold, margin: '0 0 30px 0',
+            letterSpacing: '-0.01em',
+            fontFamily: 'Georgia, serif',
+          }}
+        >
+          Simulator
+        </motion.div>
 
-        {/* Vignette overlay */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
-          background: 'radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, rgba(7,7,15,0.85) 100%)',
-        }} />
+        {/* Typewriter line */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          style={{
+            fontFamily: 'monospace', fontSize: 11,
+            color: C.goldMid, letterSpacing: '0.04em',
+            minHeight: 18, marginBottom: 38,
+          }}
+        >
+          {typed}
+          <span style={{ opacity: 0.35 }}>|</span>
+        </motion.div>
 
-        {/* ── Main content ── */}
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: 680, width: '100%', textAlign: 'center' }}>
+        {/* Type badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          style={{
+            display: 'flex', gap: 12,
+            justifyContent: 'center', flexWrap: 'wrap',
+            marginBottom: 46,
+          }}
+        >
+          <Badge Icon={Cpu} label="DFA" sublabel="Deterministic" delay={0.5} />
+          <Badge Icon={GitMerge} label="NFA" sublabel="Non-Deterministic" delay={0.62} />
+          <Badge Icon={Terminal} label="e-NFA" sublabel="Epsilon Transitions" delay={0.74} />
+        </motion.div>
 
-          {/* Top label */}
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '11px',
-              letterSpacing: '0.18em',
-              color: 'rgba(201,168,76,0.6)',
-              textTransform: 'uppercase',
-              marginBottom: '28px',
-            }}
-          >
-            <Terminal size={12} color="rgba(201,168,76,0.5)" />
-            Theory of Automata &amp; Formal Languages
-          </motion.div>
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.84 }}
+          style={{ marginBottom: 8 }}
+        >
+          <EnterButton onClick={onEnter} />
+        </motion.div>
 
-          {/* Hero title */}
-          <motion.h1
-            className="hero-title"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.1 }}
-            style={{
-              fontFamily: "'Crimson Pro', serif",
-              fontSize: 'clamp(42px, 6vw, 68px)',
-              fontWeight: 300,
-              lineHeight: 1.08,
-              color: '#f0e6cc',
-              letterSpacing: '-0.01em',
-              margin: '0 0 6px 0',
-            }}
-          >
-            Finite Automata
-          </motion.h1>
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.2 }}
-            style={{
-              fontFamily: "'Crimson Pro', serif",
-              fontSize: 'clamp(42px, 6vw, 68px)',
-              fontWeight: 300,
-              fontStyle: 'italic',
-              lineHeight: 1.08,
-              color: '#c9a84c',
-              letterSpacing: '-0.01em',
-              margin: '0 0 32px 0',
-            }}
-          >
-            Simulator
-          </motion.h1>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.38 }}
+          transition={{ delay: 1.1 }}
+          style={{
+            fontFamily: 'monospace', fontSize: 10,
+            color: C.goldMid, letterSpacing: '0.08em',
+          }}
+        >
+          Interactive DFA · NFA · e-NFA visualization &amp; simulation
+        </motion.div>
 
-          {/* Typewriter tagline */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.4 }}
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '12px',
-              color: 'rgba(201,168,76,0.5)',
-              letterSpacing: '0.04em',
-              minHeight: '20px',
-              marginBottom: '40px',
-            }}
-          >
-            {typed}<span style={{ opacity: 0.4 }}>|</span>
-          </motion.p>
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 1.0, duration: 0.65, ease: 'easeOut' }}
+          style={{
+            width: '100%', maxWidth: 480, height: 1,
+            background: `linear-gradient(90deg, transparent, ${C.goldDim}, transparent)`,
+            margin: '42px auto',
+          }}
+        />
 
-          {/* Type badges */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            style={{
-              display: 'flex',
-              gap: '12px',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              marginBottom: '48px',
-            }}
-          >
-            <TypeBadge icon={Cpu} label="DFA" sublabel="Deterministic" delay={0.55} />
-            <TypeBadge icon={GitMerge} label="NFA" sublabel="Non-Deterministic" delay={0.65} />
-            <TypeBadge icon={Terminal} label="ε-NFA" sublabel="Epsilon Transitions" delay={0.75} />
-          </motion.div>
+        {/* Author card */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
+          style={{
+            border: `1px solid rgba(201,168,76,0.14)`,
+            borderRadius: 12,
+            padding: '28px 32px',
+            background: 'rgba(201,168,76,0.025)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 14,
+            width: '100%',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Avatar circle */}
+          <div style={{
+            width: 54, height: 54, borderRadius: '50%',
+            border: `1.5px solid ${C.goldDim}`,
+            background: C.goldFaint,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'Georgia, serif',
+            fontSize: 22, color: C.gold, fontWeight: 400,
+          }}>
+            S
+          </div>
 
-          {/* CTA button */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.85 }}
-            style={{ marginBottom: '8px' }}
-          >
-            <button
-              className="enter-btn"
-              onClick={onEnter}
-              aria-label="Launch the Finite Automata Simulator"
-            >
-              <span>Launch Simulator</span>
-              <ArrowRight size={16} />
-            </button>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.4 }}
-            transition={{ delay: 1.1 }}
-            style={{
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '10px',
-              color: 'rgba(201,168,76,0.5)',
-              letterSpacing: '0.08em',
-              marginBottom: '0',
-            }}
-          >
-            Interactive DFA · NFA · ε-NFA visualization &amp; simulation
-          </motion.p>
-
-          {/* Divider */}
-          <motion.div
-            className="divider-line"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 1.0, duration: 0.7, ease: 'easeOut' }}
-            style={{ margin: '44px auto' }}
-          />
-
-          {/* Author card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-            style={{
-              border: '1px solid rgba(201,168,76,0.15)',
-              borderRadius: '12px',
-              padding: '28px 32px',
-              background: 'rgba(201,168,76,0.03)',
-              backdropFilter: 'blur(12px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '16px',
-            }}
-          >
-            {/* Author avatar placeholder */}
+          {/* Name */}
+          <div>
             <div style={{
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
-              border: '1.5px solid rgba(201,168,76,0.35)',
-              background: 'rgba(201,168,76,0.08)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "'Crimson Pro', serif",
-              fontSize: '22px',
-              color: '#c9a84c',
-              fontWeight: 400,
-              letterSpacing: '-0.02em',
+              fontFamily: 'Georgia, serif',
+              fontSize: 22, fontWeight: 400,
+              color: C.cream, marginBottom: 4,
             }}>
-              S
+              Srishti
             </div>
-
-            <div>
-              <div style={{
-                fontFamily: "'Crimson Pro', serif",
-                fontSize: '22px',
-                fontWeight: 400,
-                color: '#f0e6cc',
-                letterSpacing: '0.01em',
-                marginBottom: '4px',
-              }}>
-                Srishti
-              </div>
-              <div style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: '11px',
-                color: 'rgba(201,168,76,0.5)',
-                letterSpacing: '0.1em',
-              }}>
-                2024UCA1923 · CSAI-2
-              </div>
-            </div>
-
-            <p style={{
-              fontFamily: "'Crimson Pro', serif",
-              fontSize: '15px',
-              color: 'rgba(240,230,204,0.55)',
-              lineHeight: 1.6,
-              maxWidth: 380,
-              margin: '0',
-              fontStyle: 'italic',
+            <div style={{
+              fontFamily: 'monospace', fontSize: 11,
+              color: C.goldMid, letterSpacing: '0.1em',
             }}>
-              Building tools where theoretical computation meets interactive visualization — bridging formal language theory with modern web performance.
-            </p>
-
-            {/* Social links */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <a
-                href="https://www.linkedin.com/in/sriiishmiss"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-                aria-label="Srishti on LinkedIn"
-              >
-                <Linkedin size={13} />
-                LinkedIn
-              </a>
-              <a
-                href="https://github.com/OfEarthAndEther"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="social-link"
-                aria-label="Srishti on GitHub"
-              >
-                <Github size={13} />
-                GitHub
-              </a>
+              2024UCA1923 · CSAI-2
             </div>
-          </motion.div>
+          </div>
 
-          {/* Footer label */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4 }}
-            style={{
-              marginTop: '40px',
-              fontFamily: "'IBM Plex Mono', monospace",
-              fontSize: '10px',
-              color: 'rgba(201,168,76,0.25)',
-              letterSpacing: '0.1em',
-            }}
-          >
-            React 19 · Vite · React Flow · Framer Motion
-          </motion.div>
-        </div>
+          {/* Bio */}
+          <div style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: 15, color: C.creamDim,
+            lineHeight: 1.65, maxWidth: 380,
+            fontStyle: 'italic',
+          }}>
+            Building tools where theoretical computation meets interactive
+            visualization — bridging formal language theory with modern web performance.
+          </div>
+
+          {/* Links */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <SocialLink href="https://www.linkedin.com/in/sriiishmiss" Icon={Linkedin}>
+              LinkedIn
+            </SocialLink>
+            <SocialLink href="https://github.com/OfEarthAndEther" Icon={Github}>
+              GitHub
+            </SocialLink>
+          </div>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+          style={{
+            marginTop: 36,
+            fontFamily: 'monospace', fontSize: 10,
+            color: 'rgba(201,168,76,0.22)',
+            letterSpacing: '0.1em',
+          }}
+        >
+          React 19 · Vite · React Flow · Framer Motion
+        </motion.div>
+
       </div>
-    </>
+    </div>
   );
 }
