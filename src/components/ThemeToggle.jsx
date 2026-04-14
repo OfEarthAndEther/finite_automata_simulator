@@ -2,7 +2,7 @@ import { Moon, Sun, Leaf } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState('slate-mist');
+  const [theme, setTheme] = useState('soft-cream');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

@@ -18,14 +18,14 @@ const Linkedin = ({ size = 24, color = "currentColor" }) => (
 
 /* ── palette ── */
 const C = {
-  bg: '#07070f',
-  gold: '#c9a84c',
-  goldFaint: 'rgba(201,168,76,0.08)',
-  goldDim: 'rgba(201,168,76,0.22)',
-  goldMid: 'rgba(201,168,76,0.55)',
-  cream: '#f0e6cc',
-  creamDim: 'rgba(240,230,204,0.55)',
-  dark: '#07070f',
+  bg: '#FFFDF2',
+  gold: '#D97706',
+  goldFaint: 'rgba(217, 119, 6, 0.08)',
+  goldDim: 'rgba(217, 119, 6, 0.22)',
+  goldMid: 'rgba(217, 119, 6, 0.55)',
+  cream: '#1E1B18',
+  creamDim: 'rgba(30, 27, 24, 0.65)',
+  dark: '#FFFDF2',
 };
 
 /* ── floating state-node background decoration ── */
@@ -190,9 +190,9 @@ export default function LandingPage({ onEnter }) {
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
         backgroundImage: [
-          'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(201,168,76,0.10) 0%, transparent 55%)',
-          'linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px)',
-          'linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px)',
+          'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(217, 119, 6, 0.10) 0%, transparent 55%)',
+          'linear-gradient(rgba(217, 119, 6, 0.05) 1px, transparent 1px)',
+          'linear-gradient(90deg, rgba(217, 119, 6, 0.05) 1px, transparent 1px)',
         ].join(','),
         backgroundSize: '100% 100%, 48px 48px, 48px 48px',
       }} />
@@ -205,7 +205,7 @@ export default function LandingPage({ onEnter }) {
       {/* Vignette */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 72% 72% at 50% 50%, transparent 25%, rgba(7,7,15,0.88) 100%)',
+        background: 'radial-gradient(ellipse 72% 72% at 50% 50%, transparent 25%, rgba(255,253,242,0.88) 100%)',
       }} />
 
       {/* ── Main content ── */}
@@ -335,10 +335,10 @@ export default function LandingPage({ onEnter }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
           style={{
-            border: `1px solid rgba(201,168,76,0.14)`,
+            border: `1px solid ${C.goldDim}`,
             borderRadius: 12,
             padding: '28px 32px',
-            background: 'rgba(201,168,76,0.025)',
+            background: C.goldFaint,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -379,12 +379,21 @@ export default function LandingPage({ onEnter }) {
           {/* Bio */}
           <div style={{
             fontFamily: 'Georgia, serif',
-            fontSize: 15, color: C.creamDim,
-            lineHeight: 1.65, maxWidth: 380,
-            fontStyle: 'italic',
+            fontSize: 14, color: C.creamDim,
+            lineHeight: 1.6, maxWidth: 660,
+            textAlign: 'left',
           }}>
-            Building tools where theoretical computation meets interactive
-            visualization — bridging formal language theory with modern web performance.
+            <p style={{marginBottom: '0.8em'}}>
+              Hi, I am Srishti, a Computer Science Engineering undergrad at Netaji Subhas University of Technology. I am currently exploring the convergence of computational systems and human cognition. My work operates at the intersection of rigorous systems engineering—specifically high-performance computing and operating system architecture—and the abstract theoretical frameworks of philosophy and psychology.
+            </p>
+            <p style={{marginBottom: '0.8em'}}>
+              I believe that the pursuit of Artificial General Intelligence (AGI) requires a synthesis of mathematical pattern analysis, evolutionary history, and behavioral psychology. Without the semantic depth provided by art and philosophy, technical execution remains incomplete.
+            </p>
+            <div style={{fontWeight: 'bold', marginBottom: '0.4em', color: C.cream}}>Research Focus:</div>
+            <ul style={{margin: '0 0 1em 1.5em', padding: 0}}>
+              <li style={{marginBottom: '0.3em'}}><strong>The Convergence of AGI &amp; Psychology:</strong> Investigating whether human behavioral patterns and machine learning models share a converging asymptotic limit.</li>
+              <li><strong>Systems Architecture:</strong> Analyzing the Zircon microkernel (Fuchsia OS) with a focus on capability-based security and inter-process communication (IPC) primitives compared to traditional monolithic kernels.</li>
+            </ul>
           </div>
 
           {/* Links */}
@@ -406,7 +415,7 @@ export default function LandingPage({ onEnter }) {
           style={{
             marginTop: 36,
             fontFamily: 'monospace', fontSize: 10,
-            color: 'rgba(201,168,76,0.22)',
+            color: C.goldDim,
             letterSpacing: '0.1em',
           }}
         >

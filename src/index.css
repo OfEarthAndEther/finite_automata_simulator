@@ -16,10 +16,10 @@
 
 @layer base {
   :root {
-    --bg-color: var(--color-slate-mist);
-    --text-color: var(--color-slate-mist-text);
-    --border-color: var(--color-slate-mist-border);
-    --primary-color: #3B82F6;
+    --bg-color: var(--color-soft-cream);
+    --text-color: var(--color-soft-cream-text);
+    --border-color: var(--color-soft-cream-border);
+    --primary-color: #D97706;
     --primary-text: #FFFFFF;
   }
 
