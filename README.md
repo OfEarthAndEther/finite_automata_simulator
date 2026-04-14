@@ -29,7 +29,7 @@ The project is built on a modern, highly optimized JavaScript ecosystem tailored
 
 To spin up the visualization environment locally on your own machine, execute these commands via your system terminal:
 
-1. **Navigate to the root directory**: Ensure you are in the `finite-automata` folder.
+1. **Navigate to the root directory**: Ensure you are in the `finite_automata_simulator` folder.
 2. **Install core module dependencies**:
    ```bash
    npm install
