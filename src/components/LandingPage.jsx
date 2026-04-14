@@ -1,0 +1,405 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Github, Linkedin, ArrowRight, Terminal, Cpu, GitMerge } from 'lucide-react';
+
+/* ── palette ── */
+const C = {
+  bg: '#07070f',
+  gold: '#c9a84c',
+  goldFaint: 'rgba(201,168,76,0.08)',
+  goldDim: 'rgba(201,168,76,0.22)',
+  goldMid: 'rgba(201,168,76,0.55)',
+  cream: '#f0e6cc',
+  creamDim: 'rgba(240,230,204,0.55)',
+  dark: '#07070f',
+};
+
+/* ── floating state-node background decoration ── */
+const NODES = [
+  { id: 'q0', x: '7%', y: '16%', label: 'q0', size: 54, delay: 0, dur: 7 },
+  { id: 'q1', x: '82%', y: '11%', label: 'q1', size: 44, delay: 0.6, dur: 9 },
+  { id: 'q2', x: '76%', y: '70%', label: 'q2', size: 58, delay: 1.2, dur: 8 },
+  { id: 'q3', x: '13%', y: '76%', label: 'q3', size: 42, delay: 0.9, dur: 11 },
+  { id: 'qf', x: '50%', y: '88%', label: 'qf', size: 36, delay: 1.8, dur: 6 },
+  { id: 'qt', x: '90%', y: '44%', label: 'qt', size: 30, delay: 2.1, dur: 10 },
+  { id: 'qa', x: '3%', y: '51%', label: 'qa', size: 34, delay: 1.5, dur: 9 },
+];
+
+function FloatingNode({ x, y, label, size, delay, dur, accepting }) {
+  return (
+    <motion.div
+      style={{ position: 'absolute', left: x, top: y, pointerEvents: 'none', zIndex: 0 }}
+      animate={{ opacity: [0.15, 0.3, 0.15], y: [0, -12, 0] }}
+      transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      <svg viewBox="0 0 100 100" width={size} height={size} overflow="visible">
+        {accepting && (
+          <circle cx="50" cy="50" r="48" fill="none" stroke={C.gold} strokeWidth="2.5" opacity="0.4" />
+        )}
+        <circle cx="50" cy="50" r="40" fill="none" stroke={C.gold} strokeWidth="2" opacity="0.55" />
+        <circle cx="50" cy="50" r="30" fill={C.goldFaint} />
+        <text
+          x="50" y="57"
+          textAnchor="middle"
+          fill={C.gold}
+          fontSize="26"
+          fontFamily="monospace"
+          opacity="0.7"
+        >
+          {label}
+        </text>
+      </svg>
+    </motion.div>
+  );
+}
+
+/* ── automata type badge ── */
+function Badge({ Icon, label, sublabel, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '10px 18px',
+        border: `1px solid ${C.goldDim}`,
+        borderRadius: 8,
+        background: C.goldFaint,
+      }}
+    >
+      <Icon size={15} color={C.gold} />
+      <div>
+        <div style={{ fontFamily: 'monospace', fontSize: 12, color: C.gold, letterSpacing: '0.06em' }}>
+          {label}
+        </div>
+        <div style={{ fontFamily: 'monospace', fontSize: 10, color: C.goldMid, marginTop: 2 }}>
+          {sublabel}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── social link ── */
+function SocialLink({ href, Icon, children }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '9px 20px',
+        border: `1px solid ${hov ? C.goldMid : C.goldDim}`,
+        borderRadius: 6,
+        color: hov ? C.gold : C.goldMid,
+        fontFamily: 'monospace',
+        fontSize: 12,
+        letterSpacing: '0.05em',
+        textDecoration: 'none',
+        background: hov ? C.goldFaint : 'transparent',
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <Icon size={13} />
+      {children}
+    </a>
+  );
+}
+
+/* ── CTA button ── */
+function EnterButton({ onClick }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 12,
+        padding: '15px 36px',
+        border: `1.5px solid ${C.gold}`,
+        borderRadius: 4,
+        background: hov ? C.gold : 'transparent',
+        color: hov ? C.dark : C.gold,
+        fontFamily: 'monospace',
+        fontSize: 14,
+        letterSpacing: '0.12em',
+        cursor: 'pointer',
+        transition: 'all 0.28s ease',
+        outline: 'none',
+      }}
+    >
+      Launch Simulator
+      <ArrowRight size={16} />
+    </button>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════════════ */
+export default function LandingPage({ onEnter }) {
+  const TAGLINE = "delta(q, sigma) -> q'  ·  epsilon-closure  ·  formal language";
+  const [typed, setTyped] = useState('');
+
+  useEffect(() => {
+    let i = 0;
+    const iv = setInterval(() => {
+      setTyped(TAGLINE.slice(0, i + 1));
+      i++;
+      if (i >= TAGLINE.length) clearInterval(iv);
+    }, 36);
+    return () => clearInterval(iv);
+  }, []);
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      width: '100%',
+      backgroundColor: C.bg,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+      padding: '40px 24px',
+      boxSizing: 'border-box',
+    }}>
+
+      {/* Dot-grid overlay */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+        backgroundImage: [
+          'radial-gradient(ellipse 80% 50% at 50% -5%, rgba(201,168,76,0.10) 0%, transparent 55%)',
+          'linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px)',
+          'linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px)',
+        ].join(','),
+        backgroundSize: '100% 100%, 48px 48px, 48px 48px',
+      }} />
+
+      {/* Floating nodes */}
+      {NODES.map(n => (
+        <FloatingNode key={n.id} {...n} accepting={n.id === 'qf'} />
+      ))}
+
+      {/* Vignette */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 72% 72% at 50% 50%, transparent 25%, rgba(7,7,15,0.88) 100%)',
+      }} />
+
+      {/* ── Main content ── */}
+      <div style={{
+        position: 'relative', zIndex: 2,
+        maxWidth: 660, width: '100%',
+        textAlign: 'center',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+      }}>
+
+        {/* Category label */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            fontFamily: 'monospace', fontSize: 11,
+            letterSpacing: '0.18em', color: C.goldMid,
+            textTransform: 'uppercase', marginBottom: 28,
+          }}
+        >
+          <Terminal size={12} color={C.goldMid} />
+          Theory of Automata &amp; Formal Languages
+        </motion.div>
+
+        {/* Heading line 1 */}
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          style={{
+            fontSize: 'clamp(38px, 6.5vw, 64px)',
+            fontWeight: 300, lineHeight: 1.08,
+            color: C.cream, margin: '0 0 4px 0',
+            letterSpacing: '-0.01em',
+            fontFamily: 'Georgia, serif',
+          }}
+        >
+          Finite Automata
+        </motion.div>
+
+        {/* Heading line 2 — italic gold */}
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.18 }}
+          style={{
+            fontSize: 'clamp(38px, 6.5vw, 64px)',
+            fontWeight: 300, fontStyle: 'italic', lineHeight: 1.08,
+            color: C.gold, margin: '0 0 30px 0',
+            letterSpacing: '-0.01em',
+            fontFamily: 'Georgia, serif',
+          }}
+        >
+          Simulator
+        </motion.div>
+
+        {/* Typewriter line */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          style={{
+            fontFamily: 'monospace', fontSize: 11,
+            color: C.goldMid, letterSpacing: '0.04em',
+            minHeight: 18, marginBottom: 38,
+          }}
+        >
+          {typed}
+          <span style={{ opacity: 0.35 }}>|</span>
+        </motion.div>
+
+        {/* Type badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          style={{
+            display: 'flex', gap: 12,
+            justifyContent: 'center', flexWrap: 'wrap',
+            marginBottom: 46,
+          }}
+        >
+          <Badge Icon={Cpu} label="DFA" sublabel="Deterministic" delay={0.5} />
+          <Badge Icon={GitMerge} label="NFA" sublabel="Non-Deterministic" delay={0.62} />
+          <Badge Icon={Terminal} label="e-NFA" sublabel="Epsilon Transitions" delay={0.74} />
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.84 }}
+          style={{ marginBottom: 8 }}
+        >
+          <EnterButton onClick={onEnter} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.38 }}
+          transition={{ delay: 1.1 }}
+          style={{
+            fontFamily: 'monospace', fontSize: 10,
+            color: C.goldMid, letterSpacing: '0.08em',
+          }}
+        >
+          Interactive DFA · NFA · e-NFA visualization &amp; simulation
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 1.0, duration: 0.65, ease: 'easeOut' }}
+          style={{
+            width: '100%', maxWidth: 480, height: 1,
+            background: `linear-gradient(90deg, transparent, ${C.goldDim}, transparent)`,
+            margin: '42px auto',
+          }}
+        />
+
+        {/* Author card */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
+          style={{
+            border: `1px solid rgba(201,168,76,0.14)`,
+            borderRadius: 12,
+            padding: '28px 32px',
+            background: 'rgba(201,168,76,0.025)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 14,
+            width: '100%',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Avatar circle */}
+          <div style={{
+            width: 54, height: 54, borderRadius: '50%',
+            border: `1.5px solid ${C.goldDim}`,
+            background: C.goldFaint,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'Georgia, serif',
+            fontSize: 22, color: C.gold, fontWeight: 400,
+          }}>
+            S
+          </div>
+
+          {/* Name */}
+          <div>
+            <div style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 22, fontWeight: 400,
+              color: C.cream, marginBottom: 4,
+            }}>
+              Srishti
+            </div>
+            <div style={{
+              fontFamily: 'monospace', fontSize: 11,
+              color: C.goldMid, letterSpacing: '0.1em',
+            }}>
+              2024UCA1923 · CSAI-2
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: 15, color: C.creamDim,
+            lineHeight: 1.65, maxWidth: 380,
+            fontStyle: 'italic',
+          }}>
+            Building tools where theoretical computation meets interactive
+            visualization — bridging formal language theory with modern web performance.
+          </div>
+
+          {/* Links */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <SocialLink href="https://www.linkedin.com/in/sriiishmiss" Icon={Linkedin}>
+              LinkedIn
+            </SocialLink>
+            <SocialLink href="https://github.com/OfEarthAndEther" Icon={Github}>
+              GitHub
+            </SocialLink>
+          </div>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+          style={{
+            marginTop: 36,
+            fontFamily: 'monospace', fontSize: 10,
+            color: 'rgba(201,168,76,0.22)',
+            letterSpacing: '0.1em',
+          }}
+        >
+          React 19 · Vite · React Flow · Framer Motion
+        </motion.div>
+
+      </div>
+    </div>
+  );
+}
