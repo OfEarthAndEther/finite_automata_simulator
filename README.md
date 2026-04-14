@@ -9,6 +9,8 @@
 
 ## Project Overview
 
+https://github.com/user-attachments/assets/c2df3d7b-e953-429e-a213-23f68dda5e70
+
 **Finite Automata Simulator** is a robust, interactive visualization tool designed to render, simulate, and analyze formal computational models in real-time. Created for rigorous academic applications and technical demonstrations, the simulator provides an intuitive canvas for engineering Deterministic Finite Automata (DFA), Non-Deterministic Finite Automata (NFA), and Epsilon-NFA (ε-NFA). It facilitates dynamic string processing, step-by-step state transition evaluation, and deterministic simulation to thoroughly analyze theoretical language boundaries.
 
 ---
